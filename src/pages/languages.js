@@ -1,18 +1,7 @@
 import React from 'react'
-import { getLanguages, addLanguage, deleteLanguage } from '../controller/languages.controller';
+import { getData, addData, deleteData } from '../controller/crud.controller';
 import { useEffect, useState } from "react";
 import { Layout } from '@/components/Layout'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -21,15 +10,22 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import DeleteModal from '../components/DeleteModal.js';
+import MyTable from '../components/MyTable.js';
 
 export default function languages() {
    const [languages, setLanguages] = useState([]);
    const [language, setLanguage] = useState({code: 0, name: ''});
+   const [languageDTO, setLanguageDTO] = useState({name: ''});
    const [open, setOpen] = React.useState(false);
    const [deleteModal, setDeleteModal] = React.useState({state: false, body: {code: 0, name: ''}});
 
+   const columns = [
+      {name: "CODIGO", align: "inherit"},
+      {name: "NOMBRE", align: "inherit"}
+   ];
+
    const openNew = () => {
-      setLanguage({...language, code: 0, name: ''});b
+      setLanguage({...language, code: 0, name: ''});
       setOpen(true);
    };
 
@@ -38,73 +34,42 @@ export default function languages() {
       setLanguage({...language, code: row.code, name: row.name});
    };
 
+   const openDelete = (row) => {
+      setDeleteModal({state: true, body: {code: row.code, name: row.name}})
+   };
+
    const save = () => {
       setOpen(false);
       
-      addLanguage(language).then(res => {
-         render();
+      addData('languages', language.code, languageDTO).then(res => {
+         renderLanguages();
       })
       .catch(error => {console.log(error)});
    };
 
    const drop = (code) => {
-      deleteLanguage(code).then(res => {
+      deleteData('languages', code).then(res => {
          setDeleteModal({...deleteModal, state: false})
-         render();
+         renderLanguages();
       })
       .catch(error => {console.log(error)});
    };
 
-   const render = () => {
-      getLanguages().then(res => {
-         setLanguages(res.data)
-      })
-      .catch(error => {console.log(error)});
+   const renderLanguages = async () => {
+      let response = await getData('languages');
+      setLanguages(response.data)
    };
 
    useEffect(() => {
-      render();
+      renderLanguages();
    }, []);
 
    return (
       <Layout title="Idiomas">
-         <TableContainer component={Paper} sx={{ width: '60%', margin: 'auto' }} >
-            <Table aria-label="simple table">
-               <TableHead>
-                  <TableRow>
-                     <TableCell>CODIGO</TableCell>
-                     <TableCell>NOMBRE</TableCell>
-                     <TableCell align="right">
-                        <IconButton aria-label="add" color="primary" onClick={openNew}>
-                           <AddIcon />
-                        </IconButton>
-                     </TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {languages.map((row) => (
-                     <TableRow
-                        key={row.code}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                     >
-                        <TableCell component="th" scope="row" align="center" style={{width: '100px'}}>{row.code}</TableCell>
-                        <TableCell component="th" scope="row">{row.name}</TableCell>
-                        <TableCell component="th" scope="row" align="right">
-                           <IconButton aria-label="edit" color="primary" onClick={() => openEdit(row)}>
-                              <EditIcon />
-                           </IconButton>
-                           <IconButton aria-label="delete" color="error" onClick={() => setDeleteModal({state: true, body: {code: row.code ,name: row.name}})}>
-                              <DeleteIcon />
-                           </IconButton>
-                        </TableCell>
-                     </TableRow>
-                  ))}
-               </TableBody>
-            </Table>
-         </TableContainer>
+         <MyTable columns={columns} rows={languages} openNew={openNew} openEdit={openEdit} openDelete={openDelete}/>
 
          <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-            <DialogTitle>NUEVO IDIOMA</DialogTitle>
+            <DialogTitle>{language.code > 0 ? 'EDITAR' : 'NUEVO'} IDIOMA</DialogTitle>
             <DialogContent>
                <Grid spacing={1} sx={{pt: 1}} container>
                   <Grid item xs>
@@ -112,7 +77,10 @@ export default function languages() {
                         id="name" 
                         label="Nombre" 
                         variant="outlined" 
-                        onChange={(e) => {setLanguage({...language, name: e.target.value})}}
+                        onChange={(e) => {
+                           setLanguage({...language, name: e.target.value})
+                           setLanguageDTO({...languageDTO, name: e.target.value})
+                        }}
                         value={language.name || ''}
                         fullWidth
                      />

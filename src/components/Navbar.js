@@ -26,6 +26,7 @@ const menuItems = [
   {name: 'Servicios', path: '/services', icon: <InboxIcon /> },
   {name: 'Clientes', path: '/clients', icon: <HailIcon /> },
   {name: 'Proveedores', path: '/providers', icon: <MailIcon /> },
+  {name: 'Items', path: '/items', icon: <MailIcon /> },
   {name: 'Idioma', path: '/languages', icon: <TranslateIcon /> }
 ]
 
