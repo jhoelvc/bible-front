@@ -27,7 +27,10 @@ const menuItems = [
   {name: 'Clientes', path: '/clients', icon: <HailIcon /> },
   {name: 'Proveedores', path: '/providers', icon: <MailIcon /> },
   {name: 'Items', path: '/items', icon: <MailIcon /> },
-  {name: 'Idioma', path: '/languages', icon: <TranslateIcon /> }
+  {name: 'Idioma', path: '/languages', icon: <TranslateIcon /> },
+  {name: 'Tipos de servicios', path: '/serviceTypes', icon: <TranslateIcon /> },
+  {name: 'Tipos de DNI', path: '/identityDocumentType', icon: <TranslateIcon /> },
+  {name: 'Estados de file', path: '/fileState', icon: <TranslateIcon /> }
 ]
 
 export default function Navbar({children, title}) {

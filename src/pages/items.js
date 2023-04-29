@@ -80,7 +80,7 @@ export default function items() {
                         variant="outlined" 
                         onChange={(e) => {
                            setItem({...item, name: e.target.value})
-                           setItemDTO({...item, name: e.target.value})
+                           setItemDTO({...itemDTO, name: e.target.value})
                         }}
                         value={item.name || ''}
                         fullWidth
@@ -93,7 +93,7 @@ export default function items() {
                         variant="outlined" 
                         onChange={(e) => {
                            setItem({...item, price: e.target.value})
-                           setItemDTO({...item, price: e.target.value})
+                           setItemDTO({...itemDTO, price: e.target.value})
                         }}
                         value={item.price || ''}
                         fullWidth
