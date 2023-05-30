@@ -18,8 +18,6 @@ export default function services() {
    const [serviceTypes, setServiceTypes] = useState([]);
    const [service, setService] = useState({code: 0, name: '', service_code_dependency: 0, service_type_code: 1});
    const [serviceDTO, setServiceDTO] = useState({name: '', service_code_dependency: 0, service_type_code: 1});
-   const [serviceType, setServiceType] = useState({code: 0, name: ''});
-   const [serviceTypeDTO, setServiceTypeDTO] = useState({name: ''});
    const [open, setOpen] = React.useState(false);
    const [deleteModal, setDeleteModal] = React.useState({state: false, body: {code: 0, name: ''}});
 
