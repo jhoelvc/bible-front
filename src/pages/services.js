@@ -9,13 +9,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
 import DeleteModal from '../components/DeleteModal.js';
 import MyTable from '../components/MyTable.js';
 
 export default function services() {
    const [services, setServices] = useState([]);
-   const [service, setService] = useState({code: 0, name: '', price: 0});
-   const [serviceDTO, setServiceDTO] = useState({name: '', price: 0});
+   const [serviceTypes, setServiceTypes] = useState([]);
+   const [service, setService] = useState({code: 0, name: '', service_code_dependency: 0, service_type_code: 1});
+   const [serviceDTO, setServiceDTO] = useState({name: '', service_code_dependency: 0, service_type_code: 1});
+   const [serviceType, setServiceType] = useState({code: 0, name: ''});
+   const [serviceTypeDTO, setServiceTypeDTO] = useState({name: ''});
    const [open, setOpen] = React.useState(false);
    const [deleteModal, setDeleteModal] = React.useState({state: false, body: {code: 0, name: ''}});
 
@@ -58,12 +62,17 @@ export default function services() {
 
    const renderServices = async () => {
       let response = await getData('service');
-      debugger
       setServices(response.data)
    };
 
+   const getServicesTypes = async () => {
+      let response = await getData('service_type')
+      setServiceTypes(response.data);
+   };
+
    useEffect(() => {
-    renderServices();
+      renderServices();
+      getServicesTypes();
    }, []);
 
    return (
@@ -76,7 +85,25 @@ export default function services() {
                <Grid spacing={1} sx={{pt: 1}} container>
                   <Grid item xs={12}>
                      <TextField 
-                        id="name" 
+                        label="Tipo de servicio" 
+                        variant="outlined" 
+                        onChange={(e) => {
+                           setService({...service, service_type_code: e.target.value})
+                           setServiceDTO({...serviceDTO, service_type_code: e.target.value})
+                        }}
+                        value={service.service_type_code}
+                        fullWidth
+                        select
+                     >
+                        {serviceTypes.map((item) => {
+                           return (
+                              <MenuItem key={item.code} value={item.code}>{item.name}</MenuItem>
+                           )
+                        })}
+                     </TextField>
+                  </Grid>
+                  <Grid item xs={12}>
+                     <TextField 
                         label="Nombre" 
                         variant="outlined" 
                         onChange={(e) => {
@@ -87,19 +114,7 @@ export default function services() {
                         fullWidth
                      />
                   </Grid>
-                  <Grid item xs={12}>
-                     <TextField 
-                        id="price" 
-                        label="Precio" 
-                        variant="outlined" 
-                        onChange={(e) => {
-                           setService({...service, price: e.target.value})
-                           setServiceDTO({...serviceDTO, price: e.target.value})
-                        }}
-                        value={service.price || ''}
-                        fullWidth
-                     />
-                  </Grid>
+                  
                </Grid>
             </DialogContent>
             <DialogActions>
